@@ -21,8 +21,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = local_settings.DJANGO_SECRET_KEY
-WX_APP_SECRET_KEY = local_settings.WX_APP_SECRET_CODE
-WX_APP_ID = local_settings.WX_APP_ID
+WECHAT_APP_SECRET_KEY = local_settings.WECHAT_APP_SECRET_CODE
+WECHAT_APP_ID = local_settings.WECHAT_APP_ID
+PROJECT_NAME = "芜湖东站消防设施追踪系统"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -38,10 +39,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework',
     'rest_framework.authtoken',
+    'rest_framework',
+    'drf_yasg',
     'guardian',
-    'user'
+    'user',
 ]
 
 MIDDLEWARE = [
@@ -57,7 +59,7 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'ERCodeSystem.urls'
 AUTHENTICATION_BACKENDS = ('django.contrib.auth.backends.ModelBackend',
                            'guardian.backends.ObjectPermissionBackend',
-                           'rest_framework.authentication.SessionAuthentication'
+                           'rest_framework.authentication.SessionAuthentication',
                            'rest_framework.authentication.TokenAuthentication',
                            )
 
@@ -111,7 +113,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/2.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'zh-hans'
 
 TIME_ZONE = 'UTC'
 

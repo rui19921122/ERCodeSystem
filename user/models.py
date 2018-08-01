@@ -11,8 +11,8 @@ class OuterUser(models.Model):
     """
     username = models.CharField(max_length=20, verbose_name='姓名', null=True, blank=True)
     inner_user = models.ForeignKey('auth.User', verbose_name='系统内姓名', on_delete=models.CASCADE)
-    wx_name = models.CharField(max_length=100, verbose_name='微信名称', )
-    wx_id = models.CharField(max_length=100, verbose_name='微信id')
+    wechat_name = models.CharField(max_length=100, verbose_name='微信名称', )
+    wechat_id = models.CharField(max_length=100, verbose_name='微信open_id')
 
     class Meta:
         verbose_name = '用户管理'
@@ -25,22 +25,22 @@ class OuterUser(models.Model):
         if self.username:
             return self.username
         else:
-            return self.wx_name
+            return self.wechat_name
 
     @classmethod
-    def create_user(cls, wx_name, wx_id):
+    def create_user(cls, wechat_name, wechat_id):
         """
         创建一个新的系统用户,系统密码为随机生成的密码，因此用户仅可通过微信小程序api进行登陆。
-        :param wx_name: 微信用户名
-        :param wx_id: 微信用户识别码
+        :param wechat_name: 微信用户名
+        :param wechat_id: 微信用户识别码
         :return: OuterUser
         """
         from django.contrib.auth.models import User
-        new_inner_user = User.objects.create_user(username=wx_name,
+        new_inner_user = User.objects.create_user(username=wechat_name,
                                                   password=uuid.uuid4())
         new_outer_user = cls.objects.create(
-            wx_id=wx_id,
-            wx_name=wx_name,
+            wechat_id=wechat_id,
+            wechat_name=wechat_name,
             inner_user=new_inner_user,
             username=''
         )
@@ -60,3 +60,4 @@ class OuterUser(models.Model):
             raise BaseException()
         else:
             return self
+
