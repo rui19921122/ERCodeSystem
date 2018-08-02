@@ -6,7 +6,7 @@ from django.conf import settings
 
 
 def create_default_group(apps, schema_editor):
-    emit_post_migrate_signal(2, False, 'default')
+    emit_post_migrate_signal(1, False, 'default')
     from django.contrib.auth.models import User
     GroupModel = apps.get_model('auth', 'group')
     User.objects.create_superuser(username=settings.ADMIN_USERNAME,

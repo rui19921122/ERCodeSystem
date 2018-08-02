@@ -44,6 +44,15 @@ class TestCreateUser(APITestCase):
         self.assertEqual('changed_username', changed_user.username)
         self.client.logout()
 
+    def test_admin_can_update_user_permission(self):
+        # 测试管理员用户是否可以修改任意一个用户的权限
+        changed_user = OuterUser.create_user('changed_user2', '123456')
+        self.client.force_login(self.admin_user.inner_user)
+        url = reverse('update username and permission', kwargs={'pk': changed_user.inner_user_id})
+        res = self.client.put(url, {'permission': 'admin'})
+        changed_user.refresh_from_db()
+        self.assertEqual(changed_user.inner_user.has_perm('user.can_set_username'), True)
+
     def test_a_normal_user_can_not_update_username(self):
         # 测试一个非管理用户是否不可以修改任意一个用户的名称
         changed_user = OuterUser.create_user('changed_user2', '123456')
@@ -54,3 +63,7 @@ class TestCreateUser(APITestCase):
         changed_user.refresh_from_db()
         self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(changed_user.username, '')
+
+    def test_list_users(self):
+        # 测试管理员是否可以查询到所有用户
+        pass

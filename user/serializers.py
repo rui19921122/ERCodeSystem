@@ -31,7 +31,7 @@ class UpdateUsernameAndPermissionSerializer(serializers.Serializer):
         :param attrs:
         :return:
         """
-        if attrs['username'] or attrs['permission']:
+        if attrs.get('username', None) or attrs.get('permission', None):
             return attrs
         else:
             raise ValidationError("用户姓名或者权限必需指定一个")
@@ -49,9 +49,13 @@ class UpdateUsernameAndPermissionSerializer(serializers.Serializer):
         if permission:
             # 如果设置了permission字段，则开始设置用户权限组
             # 首先清空用户相关权限
-            instance.inner_user.groups.filter().delete()
-        if permission == 'none':
-            # 如果用户权限被设置为none，则不添加任何权限
-            pass
-        elif permission == 'normal':
-            return instance
+            permission_names = ('normal group', 'admin group')
+            instance.inner_user.groups.filter(name__in=permission_names).delete()
+            if permission == 'none':
+                # 如果用户权限被设置为none，则不添加任何权限
+                pass
+            elif permission == 'normal':
+                instance.inner_user.groups.add(Group.objects.get(name=permission_names[0]))
+            elif permission == 'admin':
+                instance.inner_user.groups.add(Group.objects.get(name=permission_names[1]))
+        return instance
