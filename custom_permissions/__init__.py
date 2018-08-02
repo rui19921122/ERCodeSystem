@@ -1,1 +1,1 @@
-from .can_update_username import UserCanUpdateUsername
+from .can_update_username import UserCanSetUserInfo

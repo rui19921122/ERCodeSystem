@@ -3,7 +3,7 @@ from .models import OuterUser
 from django.contrib.auth.models import Group, Permission
 from rest_framework.test import APITestCase
 from django.urls import reverse
-from .serializers import UpdateUsernameSerializer
+from .serializers import UpdateUsernameAndPermissionSerializer
 from rest_framework import status
 
 
@@ -37,7 +37,7 @@ class TestCreateUser(APITestCase):
         # 测试管理员用户是否可以修改任意一个用户的名称
         changed_user = OuterUser.create_user('changed_user', '123456')
         self.client.force_login(self.admin_user.inner_user)
-        url = reverse('update_username', kwargs={'pk': changed_user.inner_user_id})
+        url = reverse('update username and permission', kwargs={'pk': changed_user.inner_user_id})
         res = self.client.put(url, {'username': 'changed_username'})
         changed_user.refresh_from_db()
         self.assertEqual(res.status_code, 200)
@@ -49,7 +49,7 @@ class TestCreateUser(APITestCase):
         changed_user = OuterUser.create_user('changed_user2', '123456')
         normal_user = OuterUser.create_user('normal_user', '123456')
         self.client.force_login(normal_user.inner_user)
-        url = reverse('update_username', kwargs={'pk': changed_user.inner_user_id})
+        url = reverse('update username and permission', kwargs={'pk': changed_user.inner_user_id})
         res = self.client.put(url, {'username': 'changed_username', 'user_id': changed_user.id})
         changed_user.refresh_from_db()
         self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)

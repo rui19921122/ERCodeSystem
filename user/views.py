@@ -9,7 +9,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from .models import OuterUser
 from rest_framework import permissions
 
-from .serializers import WxUserSerializer, UpdateUsernameSerializer
+from .serializers import WxUserSerializer, UpdateUsernameAndPermissionSerializer
 
 
 # Create your views here.
@@ -52,15 +52,15 @@ class UserView(GenericAPIView):
                       'nickname': outer_user.wechat_name})
 
 
-from custom_permissions import UserCanUpdateUsername
+from custom_permissions import UserCanSetUserInfo
 
 
-class UpdateUsernameView(UpdateAPIView):
+class UpdateUsernameAndPermissionView(UpdateAPIView):
     """
-    管理员用户可以使用此API更改相关用户的真实姓名，以方便在系统内区分
+    管理员用户可以使用此API更改相关用户的真实姓名以及权限，以方便在系统内区分
     """
-    permission_classes = (UserCanUpdateUsername, permissions.IsAuthenticated)
-    serializer_class = UpdateUsernameSerializer
+    permission_classes = (UserCanSetUserInfo, permissions.IsAuthenticated)
+    serializer_class = UpdateUsernameAndPermissionSerializer
 
     def get_object(self):
         obj = get_object_or_404(

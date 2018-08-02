@@ -17,7 +17,7 @@ class OuterUser(models.Model):
     class Meta:
         verbose_name = '用户管理'
         permissions = [
-            ('can_set_username', '能够更改其他用户的姓名'),
+            ('can_set_username', '能够更改其他用户的姓名和权限'),
             ('can_set_user_qrcode_permission', '能够更改其他用户是否可以添加二维码')
         ]
 

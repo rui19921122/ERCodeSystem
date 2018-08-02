@@ -24,6 +24,8 @@ SECRET_KEY = local_settings.DJANGO_SECRET_KEY
 WECHAT_APP_SECRET_KEY = local_settings.WECHAT_APP_SECRET_CODE
 WECHAT_APP_ID = local_settings.WECHAT_APP_ID
 PROJECT_NAME = "芜湖东站消防设施追踪系统"
+ADMIN_USERNAME = local_settings.ADMIN_USERNAME
+ADMIN_PASSWORD = local_settings.ADMIN_PASSWORD
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -115,7 +117,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'zh-hans'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'UTC-8'
 
 USE_I18N = True
 
