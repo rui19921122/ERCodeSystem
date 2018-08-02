@@ -4,6 +4,7 @@ from django.contrib.auth.models import Group, Permission
 from rest_framework.test import APITestCase
 from django.urls import reverse
 from .serializers import UpdateUsernameAndPermissionSerializer
+from rest_framework.utils.encoders import JSONEncoder
 from rest_framework import status
 
 
@@ -14,9 +15,7 @@ class TestCreateUser(APITestCase):
         # 创建一个基本用户
         self.admin_user = OuterUser.create_user('test', '123456')
         # 创建一个管理员用户组
-        self.admin_group = Group.objects.create(name='admin user')
-        self.admin_group.permissions.add(Permission.objects.get(codename='can_set_username'))
-
+        self.admin_group = Group.objects.get(name='admin group')
         self.admin_user.inner_user.groups.add(self.admin_group)
 
     def test_create_user(self):
@@ -52,6 +51,7 @@ class TestCreateUser(APITestCase):
         res = self.client.put(url, {'permission': 'admin'})
         changed_user.refresh_from_db()
         self.assertEqual(changed_user.inner_user.has_perm('user.can_set_username'), True)
+        self.client.logout()
 
     def test_a_normal_user_can_not_update_username(self):
         # 测试一个非管理用户是否不可以修改任意一个用户的名称
@@ -66,4 +66,19 @@ class TestCreateUser(APITestCase):
 
     def test_list_users(self):
         # 测试管理员是否可以查询到所有用户
-        pass
+        url = reverse('query_users')
+        self.client.force_login(self.admin_user.inner_user)
+        users = OuterUser.objects.all()
+        expert_value = []
+        for user in users:
+            expert_value.append({
+                'username': user.username,
+                'wechat_name': user.wechat_name,
+                'pk': user.pk,
+                'group': user.group()
+            })
+        res = self.client.get(url)
+        self.assertListEqual(
+            expert_value,
+            res.json()
+        )

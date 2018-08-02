@@ -6,6 +6,22 @@ from django.contrib.auth.models import Group, Permission
 from user.models import OuterUser
 
 
+class UserInfoSerializer(serializers.ModelSerializer):
+    """
+    用户信息
+    """
+
+    class Meta:
+        model = OuterUser
+        fields = ('username', 'pk', 'wechat_name', 'group')
+
+    def create(self, validated_data):
+        raise NotImplementedError()
+
+    def update(self, instance, validated_data):
+        raise NotImplementedError()
+
+
 class WxUserSerializer(serializers.Serializer):
     """
     小程序发起的用户信息,method post.

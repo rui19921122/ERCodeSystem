@@ -3,11 +3,10 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.authtoken.models import Token
-from rest_framework.generics import GenericAPIView, UpdateAPIView, get_object_or_404
 from rest_framework import viewsets
 from django.core.exceptions import ObjectDoesNotExist
 from .models import OuterUser
-from rest_framework import permissions
+from rest_framework import permissions, generics
 
 from .serializers import WxUserSerializer, UpdateUsernameAndPermissionSerializer
 
@@ -15,7 +14,7 @@ from .serializers import WxUserSerializer, UpdateUsernameAndPermissionSerializer
 # Create your views here.
 
 
-class UserView(GenericAPIView):
+class UserView(generics.GenericAPIView):
     """
     获取用户的信息
     """
@@ -55,7 +54,7 @@ class UserView(GenericAPIView):
 from custom_permissions import UserCanSetUserInfo
 
 
-class UpdateUsernameAndPermissionView(UpdateAPIView):
+class UpdateUsernameAndPermissionView(generics.UpdateAPIView):
     """
     管理员用户可以使用此API更改相关用户的真实姓名以及权限，以方便在系统内区分
     """
@@ -63,8 +62,18 @@ class UpdateUsernameAndPermissionView(UpdateAPIView):
     serializer_class = UpdateUsernameAndPermissionSerializer
 
     def get_object(self):
-        obj = get_object_or_404(
+        obj = generics.get_object_or_404(
             OuterUser, inner_user_id=self.kwargs.get(self.lookup_field)
         )
         self.check_object_permissions(self.request, obj)
         return obj
+
+
+class QueryAllUserInfoView(generics.ListAPIView):
+    """
+    管理员可以使用此api获取所有用户
+    """
+    from .serializers import UserInfoSerializer
+    queryset = OuterUser.objects.all()
+    permission_classes = (UserCanSetUserInfo, permissions.IsAuthenticated)
+    serializer_class = UserInfoSerializer

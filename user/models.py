@@ -27,6 +27,12 @@ class OuterUser(models.Model):
         else:
             return self.wechat_name
 
+    def group(self):
+        """
+        :return: 该用户所具备的权限
+        """
+        return [i.name for i in self.inner_user.groups.all()]
+
     @classmethod
     def create_user(cls, wechat_name, wechat_id):
         """
@@ -60,4 +66,3 @@ class OuterUser(models.Model):
             raise BaseException()
         else:
             return self
-
